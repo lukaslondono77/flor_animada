@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flor Animada</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Escribe un nombre</h1>
+        <form method="POST">
+            <input type="text" name="nombre" placeholder="Escribe Arturo, Julian o Gina" required>
+            <button type="submit" name="accion" value="enviar">Enviar</button>
+        </form>
+
+        {% if nombre %}
+            <div class="loading-container">
+                <img src="/static/images/pedro.jpeg" alt="Loading..." class="loading-image">
+                <p>Cargando imagen...</p>
+            </div>
+            <script>
+                setTimeout(() => {
+                    document.querySelector(".loading-container").innerHTML = '<img src="/static/images/{{ imagen }}" alt="{{ nombre }}" class="final-image">';
+                }, 3000);
+            </script>
+            <form method="POST">
+                <button type="submit" name="borrar">Borrar y Reiniciar</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>
