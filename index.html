@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Flor Animada - Aplicación interactiva para mostrar imágenes por nombre">
+    <meta name="keywords" content="flor, animada, imágenes, interactivo">
+    <title>Flor Animada</title>
+    <link rel="stylesheet" href="static/styles.min.css">
+    <link rel="preload" href="static/images/pedro.jpeg" as="image">
+    <link rel="preload" href="static/images/arturo.jpeg" as="image">
+    <link rel="preload" href="static/images/julian.jpeg" as="image">
+    <link rel="preload" href="static/images/gina.jpeg" as="image">
+    <script src="performance.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 Flor Animada</h1>
+        <form id="mainForm">
+            <input type="text" id="nombreInput" placeholder="Escribe Arturo, Julian o Gina" required autocomplete="off" autofocus>
+            <button type="submit">✨ Enviar</button>
+        </form>
+
+        <div id="resultContainer" class="loading-container" style="display: none;">
+            <img src="static/images/pedro.jpeg" alt="Cargando..." class="loading-image" loading="eager">
+            <p>🎨 Cargando imagen mágica...</p>
+        </div>
+        
+        <div id="finalResult" style="display: none;">
+            <div class="loading-container" id="loadingContainer">
+                <!-- Final image will be inserted here -->
+            </div>
+            <button onclick="resetForm()" class="reset-btn">🔄 Borrar y Reiniciar</button>
+        </div>
+    </div>
+    
+    <script>
+        // Name to image mapping
+        const nameToImage = {
+            'arturo': 'arturo.jpeg',
+            'julian': 'julian.jpeg',
+            'gina': 'gina.jpeg'
+        };
+
+        // Handle form submission
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombreInput').value.trim().toLowerCase();
+            const imagen = nameToImage[nombre];
+            
+            if (imagen) {
+                showLoading(nombre, imagen);
+            } else {
+                // Show error message for invalid names
+                alert('Por favor, escribe uno de estos nombres: Arturo, Julian o Gina');
+            }
+        });
+
+        function showLoading(nombre, imagen) {
+            // Track image loading performance
+            if (window.perfMonitor) {
+                window.perfMonitor.trackImageLoad(imagen);
+            }
+            
+            // Hide form and show loading
+            document.getElementById('mainForm').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+            
+            // Start loading animation
+            setTimeout(() => {
+                document.getElementById('resultContainer').style.display = 'none';
+                document.getElementById('finalResult').style.display = 'block';
+                
+                // Insert final image with animation
+                const container = document.getElementById('loadingContainer');
+                container.innerHTML = `<img src="static/images/${imagen}" alt="${nombre}" class="final-image" loading="eager">`;
+                
+                // Add fade-in animation
+                container.style.opacity = '0';
+                container.style.transform = 'scale(0.8)';
+                
+                requestAnimationFrame(() => {
+                    container.style.transition = 'all 0.8s ease-out';
+                    container.style.opacity = '1';
+                    container.style.transform = 'scale(1)';
+                });
+                
+                // Track successful image display
+                if (window.perfMonitor) {
+                    window.perfMonitor.trackInteraction('image_displayed');
+                }
+            }, 3000);
+        }
+
+        function resetForm() {
+            // Reset everything
+            document.getElementById('mainForm').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('finalResult').style.display = 'none';
+            document.getElementById('nombreInput').value = '';
+            document.getElementById('nombreInput').focus();
+        }
+
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`Page loaded in ${loadTime}ms`);
+            }
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                resetForm();
+            }
+        });
+    </script>
+</body>
+</html>

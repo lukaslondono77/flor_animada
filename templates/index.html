@@ -1,33 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Flor Animada - Aplicación interactiva para mostrar imágenes por nombre">
+    <meta name="keywords" content="flor, animada, imágenes, interactivo">
     <title>Flor Animada</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preload" href="/static/images/pedro.jpeg" as="image">
+    <link rel="preload" href="/static/images/arturo.jpeg" as="image">
+    <link rel="preload" href="/static/images/julian.jpeg" as="image">
+    <link rel="preload" href="/static/images/gina.jpeg" as="image">
 </head>
 <body>
     <div class="container">
-        <h1>Escribe un nombre</h1>
-        <form method="POST">
-            <input type="text" name="nombre" placeholder="Escribe Arturo, Julian o Gina" required>
-            <button type="submit" name="accion" value="enviar">Enviar</button>
+        <h1>🌸 Flor Animada</h1>
+        <form method="POST" id="mainForm">
+            <input type="text" name="nombre" placeholder="Escribe Arturo, Julian o Gina" required autocomplete="off" autofocus>
+            <button type="submit" name="accion" value="enviar">✨ Enviar</button>
         </form>
 
         {% if nombre %}
-            <div class="loading-container">
-                <img src="/static/images/pedro.jpeg" alt="Loading..." class="loading-image">
-                <p>Cargando imagen...</p>
+            <div class="loading-container" id="loadingContainer">
+                <img src="/static/images/pedro.jpeg" alt="Cargando..." class="loading-image" loading="eager">
+                <p>🎨 Cargando imagen mágica...</p>
             </div>
-            <script>
-                setTimeout(() => {
-                    document.querySelector(".loading-container").innerHTML = '<img src="/static/images/{{ imagen }}" alt="{{ nombre }}" class="final-image">';
-                }, 3000);
-            </script>
-            <form method="POST">
-                <button type="submit" name="borrar">Borrar y Reiniciar</button>
+            <form method="POST" class="reset-form">
+                <button type="submit" name="borrar">🔄 Borrar y Reiniciar</button>
             </form>
+            
+            <script>
+                // Optimized loading with requestAnimationFrame for better performance
+                (function() {
+                    const container = document.getElementById('loadingContainer');
+                    const startTime = performance.now();
+                    const duration = 3000; // 3 seconds
+                    
+                    function updateLoading(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        if (progress >= 1) {
+                            // Use requestIdleCallback for better performance
+                            if (window.requestIdleCallback) {
+                                requestIdleCallback(() => {
+                                    container.innerHTML = '<img src="/static/images/{{ imagen }}" alt="{{ nombre }}" class="final-image" loading="eager">';
+                                });
+                            } else {
+                                setTimeout(() => {
+                                    container.innerHTML = '<img src="/static/images/{{ imagen }}" alt="{{ nombre }}" class="final-image" loading="eager">';
+                                }, 0);
+                            }
+                        } else {
+                            requestAnimationFrame(updateLoading);
+                        }
+                    }
+                    
+                    requestAnimationFrame(updateLoading);
+                })();
+            </script>
         {% endif %}
     </div>
+    
+    <!-- Performance monitoring -->
+    <script>
+        // Simple performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`Page loaded in ${loadTime}ms`);
+            }
+        });
+    </script>
 </body>
 </html>

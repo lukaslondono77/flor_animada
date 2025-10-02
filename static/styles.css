@@ -1,50 +1,140 @@
+/* Modern CSS with high contrast and performance optimizations */
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #f3f4f6;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #ffffff;
+    line-height: 1.6;
 }
 
 .container {
-    margin-top: 50px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    margin-top: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
 }
 
 input, button {
-    padding: 10px;
+    padding: 12px 20px;
     font-size: 16px;
-    margin: 5px;
+    margin: 8px;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+input {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 2px solid transparent;
+    min-width: 250px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ffffff;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 button {
-    background-color: #007BFF;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
     color: white;
-    border: none;
     cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
 }
 
 .loading-container {
-    margin-top: 20px;
+    margin-top: 2rem;
+    padding: 1rem;
 }
 
-.loading-image {
+.loading-image, .final-image {
     max-width: 300px;
-    margin-top: 20px;
-    border-radius: 10px;
+    margin: 1rem auto;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.5s ease;
+    will-change: transform;
 }
 
 .final-image {
-    transform: scale(0.75); /* Escala la imagen al 125% */
-    margin-top: 20px;
-    border-radius: 10px;
+    transform: scale(0.9);
+    animation: fadeInScale 0.8s ease-out;
 }
 
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(0.9);
+    }
+}
 
 img {
     display: block;
     margin: 0 auto;
+}
+
+/* Performance optimizations */
+.loading-container {
+    contain: layout style paint;
+}
+
+.final-image {
+    contain: layout style paint;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    input {
+        min-width: 200px;
+    }
+    
+    .loading-image, .final-image {
+        max-width: 250px;
+    }
 }
